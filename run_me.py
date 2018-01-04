@@ -1,4 +1,5 @@
 import copy
+import os
 
 class Node:
     def __init__(self, id):
@@ -49,7 +50,7 @@ class Queue:
 # Each element in adj_list is a Vertex object.
 # Each Vertex has a list of vertices that are adjacent to it. The list does not contain the actual Vertex objects.
 # Instead, the list contains Node objects that hold the id of the vertex.
-def initializeGraph(fname):
+def initialize_graph(fname):
     fname_in = fname
     with open(fname_in, 'r') as f:
         n_vertices = int(f.readline().strip())
@@ -86,7 +87,6 @@ def bfs(graph, source):
         # v = first node in u's list of adjacency vertices
         v = u.adj.head
         while(v != None):
-
             actual_node = graph[v.id]
             # If v has not yet been colored, color it with the opposite of u's color
             if actual_node.color == None:
@@ -103,7 +103,7 @@ def bfs(graph, source):
 
 # In case the graph is disconnected
 # If the graph is connected then bfs will only be called once
-def bfsUtil(graph):
+def bfs_util(graph):
     for i in range(1, len(graph)):
         if graph[i].color == None:
             # Run the bfs with vertex i as the source if vertex i has not been discovered
@@ -113,14 +113,14 @@ def bfsUtil(graph):
     return (True, graph, None, None)
 
 # This is the main function
-def colorGraph(fname_in):
+def color_graph(fname_in):
     # Initialize the adjacency list
-    adj_list = initializeGraph(fname_in)
+    adj_list = initialize_graph(fname_in)
     # v and u are the vertices where the odd cycle (if exists) was found
-    colorable, graph, v, u = bfsUtil(adj_list)
+    colorable, graph, v, u = bfs_util(adj_list)
     path = fname_in.split('/')
     # Output file name
-    fname_out = path[len(path)-1] + 'output'
+    fname_out = 'results/' + path[len(path)-1] + 'output'
     with open(fname_out, 'w') as f:
         if colorable == True:
             f.write('True\n')
@@ -150,7 +150,5 @@ def colorGraph(fname_in):
 
 
 # This exucutes the algorithm on each input graph
-# Creates three file: smallgraphoutput, largegraph1output, and largegraph2out
-colorGraph('smallgraph')
-colorGraph('largegraph1')
-colorGraph('largegraph2')
+for file in os.listdir('./graphs'):
+    color_graph('./graphs/' + file)
